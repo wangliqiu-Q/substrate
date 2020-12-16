@@ -92,9 +92,11 @@ pub mod opaque {
 }
 
 pub const VERSION: RuntimeVersion = RuntimeVersion {
+	/// bookmark: can_set_code
 	spec_name: create_runtime_str!("node-template"),
 	impl_name: create_runtime_str!("node-template"),
 	authoring_version: 1,
+	/// bookmark: can_set_code
 	spec_version: 1,
 	impl_version: 1,
 	apis: RUNTIME_API_VERSIONS,

@@ -1,20 +1,3 @@
-// This file is part of Substrate.
-
-// Copyright (C) 2017-2020 Parity Technologies (UK) Ltd.
-// SPDX-License-Identifier: Apache-2.0
-
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// 	http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 //! # System Module
 //!
 //! The System module provides low-level access to core types and cross-cutting utilities.
@@ -1239,18 +1222,17 @@ impl<T: Trait> Module<T> {
 	/// Determine whether or not it is possible to update the code.
 	///
 	/// Checks the given code if it is a valid runtime wasm blob by instantianting
-	/// it and extracting the runtime version of it. It checks that the runtime version
-	/// of the old and new runtime has the same spec name and that the spec version is increasing.
+	/// it and extracting the runtime version of it.
 	pub fn can_set_code(code: &[u8]) -> Result<(), sp_runtime::DispatchError> {
 		let current_version = T::Version::get();
 		let new_version = sp_io::misc::runtime_version(&code)
 			.and_then(|v| RuntimeVersion::decode(&mut &v[..]).ok())
 			.ok_or_else(|| Error::<T>::FailedToExtractRuntimeVersion)?;
-
+		// has the same spec name
 		if new_version.spec_name != current_version.spec_name {
 			Err(Error::<T>::InvalidSpecName)?
 		}
-
+		// the spec version must be increasing.
 		if new_version.spec_version <= current_version.spec_version {
 			Err(Error::<T>::SpecVersionNeedsToIncrease)?
 		}
