@@ -129,15 +129,13 @@ decl_module! {
 		/// This function does not check the weight of the call, and instead allows the
 		/// Sudo user to specify the weight of the call.
 		///
-		/// The dispatch origin for this call must be _Signed_.
-		///
 		/// # <weight>
 		/// - O(1).
 		/// - The weight of this call is defined by the caller.
 		/// # </weight>
 		#[weight = (*_weight, call.get_dispatch_info().class)]
 		fn sudo_unchecked_weight(origin, call: Box<<T as Trait>::Call>, _weight: Weight) -> DispatchResultWithPostInfo {
-			// This is a public call, so we ensure that the origin is some signed account.
+			// check _Signed_
 			let sender = ensure_signed(origin)?;
 			ensure!(sender == Self::key(), Error::<T>::RequireSudo);
 

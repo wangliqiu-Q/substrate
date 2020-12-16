@@ -1,19 +1,3 @@
-// This file is part of Substrate.
-
-// Copyright (C) 2017-2020 Parity Technologies (UK) Ltd.
-// SPDX-License-Identifier: Apache-2.0
-
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// 	http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
 //! # Scheduler
 //! A module for scheduling dispatches.
@@ -48,7 +32,6 @@
 //!   `Vec<u8>` parameter that can be used for identification.
 //! * `cancel_named` - the named complement to the cancel function.
 
-// Ensure we're `no_std` when compiling for Wasm.
 #![cfg_attr(not(feature = "std"), no_std)]
 
 mod benchmarking;
@@ -216,6 +199,7 @@ decl_module! {
 			priority: schedule::Priority,
 			call: Box<<T as Trait>::Call>,
 		) {
+			//
 			T::ScheduleOrigin::ensure_origin(origin.clone())?;
 			let origin = <T as Trait>::Origin::from(origin);
 			Self::do_schedule(DispatchTime::At(when), maybe_periodic, priority, origin.caller().clone(), *call)?;
