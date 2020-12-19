@@ -1,23 +1,3 @@
-// This file is part of Substrate.
-
-// Copyright (C) 2018-2020 Parity Technologies (UK) Ltd.
-// SPDX-License-Identifier: GPL-3.0-or-later WITH Classpath-exception-2.0
-
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-
-// You should have received a copy of the GNU General Public License
-// along with this program. If not, see <https://www.gnu.org/licenses/>.
-
-//! The Substrate runtime. This can be compiled with ``#[no_std]`, ready for Wasm.
-
 #![cfg_attr(not(feature = "std"), no_std)]
 // `construct_runtime!` does a lot of recursion and requires us to increase the limit to 256.
 #![recursion_limit="256"]
@@ -168,6 +148,7 @@ impl frame_system::Trait for Runtime {
 	type Hashing = BlakeTwo256;
 	type AccountId = AccountId;
 	type Lookup = Indices;
+	/// 这里定义 runtime 内部 Header 的结构与上面对于 Header 的定义是一致的。
 	type Header = generic::Header<BlockNumber, BlakeTwo256>;
 	type Event = Event;
 	type BlockHashCount = BlockHashCount;
@@ -930,9 +911,9 @@ construct_runtime!(
 
 /// The address format for describing accounts.
 pub type Address = <Indices as StaticLookup>::Source;
-/// Block header type as expected by this runtime.
+///
 pub type Header = generic::Header<BlockNumber, BlakeTwo256>;
-/// Block type as expected by this runtime.
+/// Block 的 `Header` 类型由用户自定义传入
 pub type Block = generic::Block<Header, UncheckedExtrinsic>;
 /// A Block signed with a Justification
 pub type SignedBlock = generic::SignedBlock<Block>;

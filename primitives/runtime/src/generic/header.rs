@@ -32,7 +32,7 @@ pub struct Header<Number: Copy + Into<U256> + TryFrom<U256>, Hash: HashT> {
 	/// The merkle root of the extrinsics.
 	/// 代表了该header下的区块体中交易的内容与顺序
 	pub extrinsics_root: Hash::Output,
-	/// A chain-specific digest of data useful for light clients or referencing auxiliary data.
+	/// 区块附加信息
 	pub digest: Digest<Hash::Output>,
 }
 

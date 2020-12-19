@@ -1,22 +1,3 @@
-// This file is part of Substrate.
-
-// Copyright (C) 2017-2020 Parity Technologies (UK) Ltd.
-// SPDX-License-Identifier: Apache-2.0
-
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// 	http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-//! Generic implementation of a digest.
-
 #[cfg(feature = "std")]
 use serde::{Deserialize, Serialize};
 
@@ -26,11 +7,11 @@ use crate::ConsensusEngineId;
 use crate::codec::{Decode, Encode, Input, Error};
 use sp_core::{ChangesTrieConfiguration, RuntimeDebug};
 
-/// Generic header digest.
+/// header digest.
 #[derive(PartialEq, Eq, Clone, Encode, Decode, RuntimeDebug)]
 #[cfg_attr(feature = "std", derive(Serialize, Deserialize, parity_util_mem::MallocSizeOf))]
 pub struct Digest<Hash> {
-	/// A list of logs in the digest.
+	/// 如何解析 Digest 实际上是这条链的协议之一
 	#[cfg_attr(
 		feature = "std",
 		serde(bound(serialize = "Hash: codec::Codec", deserialize = "Hash: codec::Codec"))
