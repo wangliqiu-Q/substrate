@@ -570,8 +570,8 @@ pub trait Block: Clone + Send + Sync + Codec + Eq + MaybeSerialize + Debug + May
 	fn encode_from(header: &Self::Header, extrinsics: &[Self::Extrinsic]) -> Vec<u8>;
 }
 
-
-/// Something that acts like an `Extrinsic`.
+/// unchecked_extrinsic::UncheckedExtrinsic
+/// 交易功能性
 pub trait Extrinsic: Sized + MaybeMallocSizeOf {
 	/// The function call.
 	type Call;
@@ -618,6 +618,7 @@ pub type DigestItemFor<B> = DigestItem<<<B as Block>::Header as Header>::Hash>;
 /// check the validity of a piece of extrinsic information, usually by verifying the signature.
 /// Implement for pieces of information that require some additional context `Context` in order to be
 /// checked.
+/// 进入交易池前的验证
 pub trait Checkable<Context>: Sized {
 	/// Returned if `check` succeeds.
 	type Checked;
@@ -816,6 +817,11 @@ pub trait SignedExtension: Codec + Debug + Sync + Send + Clone + Eq + PartialEq 
 	}
 }
 
+/// 生成了以下12种实现
+/// impl SignedExtra for (A1, ) {}
+/// impl SignedExtra for (A1, A2) {}
+/// .....
+/// impl SignedExtra for (A1, A2, A3 ....A11, A12) {}
 #[impl_for_tuples(1, 12)]
 impl<AccountId, Call: Dispatchable> SignedExtension for Tuple {
 	for_tuples!( where #( Tuple: SignedExtension<AccountId=AccountId, Call=Call,> )* );

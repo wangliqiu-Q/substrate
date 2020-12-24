@@ -1,20 +1,3 @@
-// This file is part of Substrate.
-
-// Copyright (C) 2017-2020 Parity Technologies (UK) Ltd.
-// SPDX-License-Identifier: Apache-2.0
-
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// 	http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 //! # Executive Module
 //!
 //! The Executive module acts as the orchestration layer for the runtime. It dispatches incoming
@@ -361,6 +344,8 @@ where
 	}
 
 	/// Actually apply an extrinsic given its `encoded_len`; this doesn't note its hash.
+	///
+	/// 真正执行交易的过程
 	fn apply_extrinsic_with_len(
 		uxt: Block::Extrinsic,
 		encoded_len: usize,
@@ -370,7 +355,7 @@ where
 			sp_tracing::info_span!("apply_extrinsic",
 				ext=?sp_core::hexdisplay::HexDisplay::from(&uxt.encode()))
 		);
-		// Verify that the signature is good.
+		// check 来自于 Checkable
 		let xt = uxt.check(&Default::default())?;
 
 		// We don't need to make sure to `note_extrinsic` only after we know it's going to be
@@ -414,10 +399,8 @@ where
 		assert!(header.state_root() == storage_root, "Storage root must match that calculated.");
 	}
 
-	/// Check a given signed transaction for validity. This doesn't execute any
-	/// side-effects; it merely checks whether the transaction would panic if it were included or not.
-	///
-	/// Changes made to storage should be discarded.
+
+	/// 交易额外信息 Extra 合法性的验证
 	pub fn validate_transaction(
 		source: TransactionSource,
 		uxt: Block::Extrinsic,
@@ -432,6 +415,7 @@ where
 		};
 
 		let xt = within_span!{ sp_tracing::Level::TRACE, "check";
+			// check 来自 Checkable, uxt 从 unchecked 变为 checked
 			uxt.check(&Default::default())
 		}?;
 
@@ -441,6 +425,7 @@ where
 
 		within_span! {
 			sp_tracing::Level::TRACE, "validate";
+			// 对 checked 进行额外信息的验证。`validate`来自于 `SignedExtension` 这个trait
 			xt.validate::<UnsignedValidator>(source, &dispatch_info, encoded_len)
 		}
 	}

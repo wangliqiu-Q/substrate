@@ -919,21 +919,26 @@ pub type Block = generic::Block<Header, UncheckedExtrinsic>;
 pub type SignedBlock = generic::SignedBlock<Block>;
 /// BlockId type as expected by this runtime.
 pub type BlockId = generic::BlockId<Block>;
-/// The SignedExtension to the basic transaction logic.
-///
+
+
 /// When you change this, you **MUST** modify [`sign`] in `bin/node/testing/src/keyring.rs`!
+/// [`sign`]: <../../testing/src/keyring.rs>
 ///
-/// [`sign`]: <../../testing/src/keyring.rs.html>
+/// 前端附加的这些额外验证信息，其顺序应该与元组中顺序相同
 pub type SignedExtra = (
 	frame_system::CheckSpecVersion<Runtime>,
 	frame_system::CheckTxVersion<Runtime>,
 	frame_system::CheckGenesis<Runtime>,
+	// CheckEra 用于一个交易在交易池的存活条件。例如在比特币中，一个交易的手续费若太低，就会一直堆积在交易池中不被打包。
+	// 而era表明这个交易可以在交易池中存活多少个区块，若超出了这个区块范围还没被打包的话，就会从交易池中剔除。
 	frame_system::CheckEra<Runtime>,
 	frame_system::CheckNonce<Runtime>,
 	frame_system::CheckWeight<Runtime>,
 	pallet_transaction_payment::ChargeTransactionPayment<Runtime>,
 );
-/// Unchecked extrinsic type as expected by this runtime.
+
+/// SignedExtra 是一个元组，同时 /primitives/runtime/src/traits.rs 有如下实现
+/// impl<AccountId, Call: Dispatchable> SignedExtension for Tuple
 pub type UncheckedExtrinsic = generic::UncheckedExtrinsic<Address, Call, Signature, SignedExtra>;
 /// The payload being signed in transactions.
 pub type SignedPayload = generic::SignedPayload<Call, SignedExtra>;
