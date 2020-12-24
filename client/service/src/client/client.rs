@@ -1290,6 +1290,7 @@ impl<B, E, Block, RA> BlockBuilderProvider<B, Block, Self> for Client<B, E, Bloc
 	) -> sp_blockchain::Result<sc_block_builder::BlockBuilder<Block, Self, B>> {
 		let info = self.chain_info();
 		sc_block_builder::BlockBuilder::new(
+			// BlockBuilder 的 api_ref 参数传入的是 self，即client自身
 			self,
 			info.best_hash,
 			info.best_number,

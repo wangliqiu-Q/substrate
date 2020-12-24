@@ -160,6 +160,7 @@ where
 		let extrinsics = &mut self.extrinsics;
 
 		self.api.execute_in_transaction(|api| {
+			// 调用到了runtime中对于api的实现体：bin/node/runtime/src/lib.rs `fn apply_extrinsic(extrinsic`
 			match api.apply_extrinsic_with_context(
 				block_id,
 				ExecutionContext::BlockConstruction,

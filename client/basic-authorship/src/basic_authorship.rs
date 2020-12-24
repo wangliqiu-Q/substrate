@@ -200,6 +200,7 @@ impl<A, B, Block, C> Proposer<B, Block, C, A>
 		)?;
 
 		for inherent in block_builder.create_inherents(inherent_data)? {
+			//
 			match block_builder.push(inherent) {
 				Err(ApplyExtrinsicFailed(Validity(e))) if e.exhausted_resources() =>
 					warn!("⚠️  Dropping non-mandatory inherent from overweight block."),
@@ -246,6 +247,7 @@ impl<A, B, Block, C> Proposer<B, Block, C, A>
 			let pending_tx_data = pending_tx.data().clone();
 			let pending_tx_hash = pending_tx.hash().clone();
 			trace!("[{:?}] Pushing to the block.", pending_tx_hash);
+			// 打包区块的过程，将交易 push 进 block_builder
 			match sc_block_builder::BlockBuilder::push(&mut block_builder, pending_tx_data) {
 				Ok(()) => {
 					debug!("[{:?}] Pushed to the block.", pending_tx_hash);

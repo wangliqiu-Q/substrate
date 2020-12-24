@@ -947,12 +947,16 @@ pub type CheckedExtrinsic = generic::CheckedExtrinsic<AccountId, Call, SignedExt
 /// Executive: handles dispatch to the various modules.
 pub type Executive = frame_executive::Executive<Runtime, Block, frame_system::ChainContext<Runtime>, Runtime, AllModules>;
 
+
+/// 生成原名函数和原名函数_with_context (context是为了区分不同的执行上下文，在原函数名称的实现中默认会传入Context::OffchainCall(None))
+/// 以上生成的函数会赋予 RuntimeApiImpl ，该对象最后会赋给client的api属性
 impl_runtime_apis! {
 	impl sp_api::Core<Block> for Runtime {
 		fn version() -> RuntimeVersion {
 			VERSION
 		}
 
+		/// frame/executive/src/lib.rs `execute_block`
 		fn execute_block(block: Block) {
 			Executive::execute_block(block)
 		}
