@@ -184,6 +184,7 @@ parameter_types! {
 impl pallet_multisig::Trait for Runtime {
 	type Event = Event;
 	type Call = Call;
+	// Balances 由 construct_runtime! 生成
 	type Currency = Balances;
 	type DepositBase = DepositBase;
 	type DepositFactor = DepositFactor;
@@ -646,6 +647,7 @@ parameter_types! {
 }
 
 impl pallet_contracts::Trait for Runtime {
+	// Timestamp 由 construct_runtime! 生成
 	type Time = Timestamp;
 	type Randomness = RandomnessCollectiveFlip;
 	type Currency = Balances;
@@ -868,6 +870,12 @@ impl pallet_vesting::Trait for Runtime {
 	type WeightInfo = weights::pallet_vesting::WeightInfo;
 }
 
+/// 控制了每个模块会导出一些属性如Storage，Call，Event，Config等等
+/// System是特殊的，一定要引入。
+/// 生成一些统一的类型如Runtime结构体，AllModules，Call等等。
+///
+/// Runtime的执行器Executive [frame/executive/src/lib.rs] 需要依托construct_runtime!宏导出的AllModules，
+/// 也就是说执行器持有所有模块的类型，将会控制这些模块的OnInitialize，OnFinalize等等。
 construct_runtime!(
 	pub enum Runtime where
 		Block = Block,
@@ -948,8 +956,16 @@ pub type CheckedExtrinsic = generic::CheckedExtrinsic<AccountId, Call, SignedExt
 pub type Executive = frame_executive::Executive<Runtime, Block, frame_system::ChainContext<Runtime>, Runtime, AllModules>;
 
 
-/// 生成原名函数和原名函数_with_context (context是为了区分不同的执行上下文，在原函数名称的实现中默认会传入Context::OffchainCall(None))
-/// 以上生成的函数会赋予 RuntimeApiImpl ，该对象最后会赋给client的api属性
+/// 生成原名函数和原名函数_with_context
+/// 带_with_context的版本与不带的其他部分实现是一样的，区别只是在于不带的版本默认为Context::OffchainCall(None)
+///
+/// ```
+/// // block_id 为链的状态，即表明“基于某个状态去执行Runtime的api调用”
+/// apply_extrinsic_with_context(block_id: BlockId, context: sp_api::ExecutionContext, e: xt: <Block as BlockT>::Extrinsic);
+/// apply_extrinsic(block_id: BlockId, context: sp_api::ExecutionContext, e: xt: <Block as BlockT>::Extrinsic);
+/// ```
+///
+///
 impl_runtime_apis! {
 	impl sp_api::Core<Block> for Runtime {
 		fn version() -> RuntimeVersion {

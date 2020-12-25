@@ -1,20 +1,3 @@
-// This file is part of Substrate.
-
-// Copyright (C) 2017-2020 Parity Technologies (UK) Ltd.
-// SPDX-License-Identifier: Apache-2.0
-
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// 	http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 //! # Assets Module
 //!
 //! A simple, secure module for dealing with fungible assets.
@@ -130,8 +113,9 @@
 //! * [`System`](../frame_system/index.html)
 //! * [`Support`](../frame_support/index.html)
 
-// Ensure we're `no_std` when compiling for Wasm.
 #![cfg_attr(not(feature = "std"), no_std)]
+// use std::vec::Vec;  // 在wasm下编译不通过
+// use sp_std::vec::Vec; // 编译通过
 
 use frame_support::{Parameter, decl_module, decl_event, decl_storage, decl_error, ensure};
 use sp_runtime::traits::{Member, AtLeast32Bit, AtLeast32BitUnsigned, Zero, StaticLookup};
@@ -167,6 +151,16 @@ decl_module! {
 		/// # </weight>
 		#[weight = 0]
 		fn issue(origin, #[compact] total: T::Balance) {
+			// // println!("test"); // wasm下编译不通过
+            // #[cfg(feature = "std")] {
+            //     println!("test"); // 能编译通过，在wasm下不会编译
+            // }
+            // // 以上可以简化为如下
+            // use sp_std::if_std;
+            // if_std! {
+            // 	println!("test if_std");
+            // }
+
 			let origin = ensure_signed(origin)?;
 
 			let id = Self::next_asset_id();

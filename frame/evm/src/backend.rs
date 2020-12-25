@@ -33,8 +33,11 @@ pub struct Log {
 	pub data: Vec<u8>,
 }
 
+
 #[derive(Clone, Eq, PartialEq, Encode, Decode, Default)]
 #[cfg_attr(feature = "std", derive(Debug, Serialize, Deserialize))]
+/// serde 序列化是在 `std` 条件编译下的。Debug也是如此，若不采用条件编译，则 `#[derive(RuntimeDebug)]`
+///
 /// External input from the transaction.
 pub struct Vicinity {
 	/// Current transaction gas price.

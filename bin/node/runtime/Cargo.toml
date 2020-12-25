@@ -12,7 +12,12 @@ repository = "https://github.com/paritytech/substrate/"
 targets = ["x86_64-unknown-linux-gnu"]
 
 [dependencies]
-
+# 若指定为 default-features = false，那么该crate的Cargo.toml在features这一栏中必须指定default = ["std"]。
+# 若指定为 optional = true，那么该crate只能被native编译，不可以被wasm编译，引用它时，需要加上#[cfg(feature = "std")]的条件编译
+# 在[features] std 中：
+# 	以 default-features = false 出现的，一定要指定为 xxx/std
+# 	以 optional = true 出现的，一定要指定为 xxx
+#
 # third-party dependencies
 codec = { package = "parity-scale-codec", version = "1.3.4", default-features = false, features = ["derive"] }
 integer-sqrt = { version = "0.1.2" }
@@ -88,6 +93,7 @@ sp-io = { version = "2.0.0", path = "../../../primitives/io" }
 
 [features]
 default = ["std"]
+
 with-tracing = [ "frame-executive/with-tracing" ]
 std = [
 	"sp-authority-discovery/std",

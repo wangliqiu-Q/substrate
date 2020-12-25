@@ -110,12 +110,11 @@ where
 		ApiExt<Block, StateBackend = backend::StateBackendFor<B, Block>>,
 	B: backend::Backend<Block>,
 {
-	/// Create a new instance of builder based on the given `parent_hash` and `parent_number`.
-	///
 	/// While proof recording is enabled, all accessed trie nodes are saved.
 	/// These recorded trie nodes can be used by a third party to prove the
 	/// output of this block builder without having access to the full storage.
 	pub fn new(
+		// client
 		api: &'a A,
 		parent_hash: Block::Hash,
 		parent_number: NumberFor<Block>,
@@ -124,6 +123,7 @@ where
 		backend: &'a B,
 	) -> Result<Self, ApiErrorFor<A, Block>> {
 		let header = <<Block as BlockT>::Header as HeaderT>::new(
+			// header 是在 parent 上+1，即意味着下一个区块！
 			parent_number + One::one(),
 			Default::default(),
 			Default::default(),
@@ -136,9 +136,9 @@ where
 		if record_proof.yes() {
 			api.record_proof();
 		}
-
+		// 注意这里的 block_id 来自的是 parent
 		let block_id = BlockId::Hash(parent_hash);
-
+		// 即调用了 node/runtime `impl_runtime_apis!` 里 `Core` 下的 initialize_block 函数
 		api.initialize_block_with_context(
 			&block_id, ExecutionContext::BlockConstruction, &header,
 		)?;
@@ -146,6 +146,7 @@ where
 		Ok(Self {
 			parent_hash,
 			extrinsics: Vec::new(),
+			// 返回的 BlockBuilder 实例内部 api 即 client
 			api,
 			block_id,
 			backend,
