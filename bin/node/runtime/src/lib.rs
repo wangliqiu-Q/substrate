@@ -876,6 +876,16 @@ impl pallet_vesting::Trait for Runtime {
 ///
 /// Runtime的执行器Executive [frame/executive/src/lib.rs] 需要依托construct_runtime!宏导出的AllModules，
 /// 也就是说执行器持有所有模块的类型，将会控制这些模块的OnInitialize，OnFinalize等等。
+///
+/// pallet:
+/// 	balances，记录用户的资金变化。
+/// 	staking，pos机制必须。
+/// 	contracts，合约模块。
+///     Babe。使用babe共识必须，例如一个epoch变化后，更换出块人列表，那么可以通过staking模块处理好对应的出块人列表然后设置进入babe的Runtime模块，然后在这轮出块中，底层的babe模块就可以读到最新的出块人列表。
+/// 	Aura。使用arua共识必须。
+/// 	Grandpa。提供grandpa验证人。
+/// 	ImOnline。底层通过内部交易/offchain等反馈当前节点存活情况。
+/// 	FinalityTracker。提供grandpa的finality已经到哪一个块的模块。
 construct_runtime!(
 	pub enum Runtime where
 		Block = Block,
